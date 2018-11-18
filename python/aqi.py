@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# coding=utf-8
+# -*- coding=utf-8 -*-
 # "DATASHEET": http://cl.ly/ekot
 # https://gist.github.com/kadamski/92653913a53baf9dd1a8
 from __future__ import print_function
@@ -97,7 +97,8 @@ def cmd_set_id(id):
     read_response()
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='aqi.log', level=logging.DEBUG)
+    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
+                        filename='aqi.log', level=logging.DEBUG)
     logging.info('AQI Monitor has been started!')
     while True:
         logging.info('collection is starting')
@@ -107,7 +108,7 @@ if __name__ == "__main__":
             values = cmd_query_data();
             if values is not None:
                 print("PM2.5: ", values[0], ", PM10: ", values[1])
-                logging.debug('values: ' + "PM2.5: ", values[0], ", PM10: ", values[1])
+                logging.debug("values: PM2.5: {0}, PM10: {1}".format(values[0], values[1]))
                 time.sleep(2)
 
         # open stored data
