@@ -4,6 +4,7 @@
 # https://gist.github.com/kadamski/92653913a53baf9dd1a8
 from __future__ import print_function
 import serial, struct, sys, time, json
+import logging
 
 DEBUG = 0
 CMD_MODE = 2
@@ -96,23 +97,30 @@ def cmd_set_id(id):
     read_response()
 
 if __name__ == "__main__":
+    logging.basicConfig(filename='aqi.log', level=logging.DEBUG)
+    logging.info('AQI Monitor has been started!')
     while True:
+        logging.info('collection is starting')
         cmd_set_sleep(0)
         cmd_set_mode(1);
         for t in range(15):
             values = cmd_query_data();
             if values is not None:
                 print("PM2.5: ", values[0], ", PM10: ", values[1])
+                logging.debug('values: ' + "PM2.5: ", values[0], ", PM10: ", values[1])
                 time.sleep(2)
 
         # open stored data
+        logging.debug('Opening aqi.json')
         with open('/var/www/html/aqi.json') as json_data:
             data = json.load(json_data)
 
         # csv
-	csv_file =  open('/var/www/html/aqi.csv', 'a')
+        logging.debug('Opening aqi.csv')
+	csv_file = open('/var/www/html/aqi.csv', 'a')
 	csv_file.write("{0},{1},{2}\n".format(values[0],values[1],time.strftime("%d.%m.%Y %H:%M:%S")))
 	csv_file.close()
+	logging.debug('Closed aqi.csv')
 
         # check if length is more than 100 and delete first element
         if len(data) > 100:
@@ -126,6 +134,7 @@ if __name__ == "__main__":
             json.dump(data, outfile)
 
         print("Going to sleep for 5min...")
+        logging.info('sleeping for 5 minutes')
         cmd_set_mode(0);
         cmd_set_sleep()
         time.sleep(300)
