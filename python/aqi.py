@@ -109,6 +109,11 @@ if __name__ == "__main__":
         with open('/var/www/html/aqi.json') as json_data:
             data = json.load(json_data)
 
+        # csv
+	csv_file =  open('/var/www/html/aqi.csv', 'a')
+	csv_file.write("{0},{1},{2}\n".format(values[0],values[1],time.strftime("%d.%m.%Y %H:%M:%S")))
+	csv_file.close()
+
         # check if length is more than 100 and delete first element
         if len(data) > 100:
             data.pop(0)
